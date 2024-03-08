@@ -38,6 +38,8 @@ describe('Register, Login User', () => {
               .post('/signup')
               .send(login_details)
               .end((err, res) =>{
+                //added line below
+                console.log(JSON.stringify(res.body));                
                 res.should.have.status(200);
                 res.body.success.should.be.eql(true);
                 //follow-up to get the JWT token
@@ -48,6 +50,8 @@ describe('Register, Login User', () => {
                         res.should.have.status(200);
                         res.body.should.have.property('token');
                         let token = res.body.token;
+                        //added line below
+                        console.log(token);
                         done();
                     })
               })
