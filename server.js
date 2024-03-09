@@ -113,7 +113,7 @@ router.post('/movies', authJwtController.isAuthenticated, function(req, res)
 });
 
 
-router.get('/movies', function(req, res)
+router.get('/movies', authJwtController.isAuthenticated, function(req, res)
 {
     Movie.find({}, function(err, movies)
     {
