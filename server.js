@@ -86,6 +86,102 @@ router.post('/signin', function (req, res) {
     })
 });
 
+
+
+
+router.post('/movies', authJwtController.isAuthenticated, function(req, res)
+{
+    if (!req.body.title || !req.body.actors || req.body.actors.length === 0)
+    {
+        res.status(400).send({success: false, message: 'Missing title or actors' });
+    } 
+    else 
+    {
+        var movie = new Movie(req.body);
+        movie.save(function(err)
+        {
+            if (err)
+            {
+                res.send(err);
+            }
+            else
+            {
+                res.json({success: true, message: 'Movie created!' });
+            }
+        });
+    }
+});
+
+
+router.get('/movies', function(req, res)
+{
+    Movie.find({}, function(err, movies)
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            res.json(movies);
+        }
+    });
+});
+
+
+router.put('/movies/:movieId', authJwtController.isAuthenticated, function(req, res)
+{
+    Movie.findById(req.params.movieId, function(err, movie)
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else if (movie)
+        {
+            Movie.updateOne({_id: req.params.movieId}, req.body, function(error)
+            {
+                if (error)
+                {
+                    res.send(error);
+                }
+                else
+                {
+                    res.json({success: true, message: 'Movie updated!'});
+                }
+            });
+        }
+        else
+        {
+            res.status(404).send({success: false, message: 'Movie not found'});
+        }
+    });
+});
+
+
+router.delete('/movies/:movieId', authJwtController.isAuthenticated, function(req, res)
+{
+    Movie.deleteOne({_id: req.params.movieId}, function(err)
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            res.json({success: true, message: 'Movie deleted!'});
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
