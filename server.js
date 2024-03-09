@@ -93,7 +93,7 @@ router.post('/movies', authJwtController.isAuthenticated, function(req, res)
 {
     if (!req.body.title || !req.body.actors || req.body.actors.length === 0)
     {
-        res.status(400).send({success: false, message: 'Missing title or actors' });
+        res.status(400).send({success: false, message: 'The movie does not contain the required infromation. It is missing a title, release date, genre, or actors.' });
     } 
     else 
     {
@@ -129,7 +129,7 @@ router.get('/movies', authJwtController.isAuthenticated, function(req, res)
 });
 
 
-router.put('/movies/:movieId', authJwtController.isAuthenticated, function(req, res)
+router.put('/movies', authJwtController.isAuthenticated, function(req, res)
 {
     Movie.findById(req.params.movieId, function(err, movie)
     {
@@ -159,7 +159,7 @@ router.put('/movies/:movieId', authJwtController.isAuthenticated, function(req, 
 });
 
 
-router.delete('/movies/:movieId', authJwtController.isAuthenticated, function(req, res)
+router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
 {
     Movie.deleteOne({_id: req.params.movieId}, function(err)
     {
