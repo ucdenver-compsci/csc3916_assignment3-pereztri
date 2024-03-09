@@ -131,29 +131,25 @@ router.get('/movies', authJwtController.isAuthenticated, function(req, res)
 
 router.put('/movies', authJwtController.isAuthenticated, function(req, res)
 {
-    Movie.findById(req.params.movieId, function(err, movie)
+    const { id, ...updateData} = req.body; 
+
+    if (!id) 
+    {
+        res.status(400).send({success: false, message: 'ID is required in the request body.'});
+    }
+    Movie.findByIdAndUpdate(id, updateData, {new: true}, function(err, movie)
     {
         if (err)
         {
             res.send(err);
         }
-        else if (movie)
+        else if (!movie)
         {
-            Movie.updateOne({_id: req.params.movieId}, req.body, function(error)
-            {
-                if (error)
-                {
-                    res.send(error);
-                }
-                else
-                {
-                    res.json({success: true, message: 'Movie updated!'});
-                }
-            });
+            res.status(404).send({success: false, message: 'Movie not found.'});
         }
         else
         {
-            res.status(404).send({success: false, message: 'Movie not found'});
+            res.json({success: true, message: 'Movie updated! Here is the update:', movie});
         }
     });
 });
@@ -161,11 +157,21 @@ router.put('/movies', authJwtController.isAuthenticated, function(req, res)
 
 router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
 {
-    Movie.deleteOne({_id: req.params.movieId}, function(err)
+    const {id} = req.body; 
+
+    if (!id) 
+    {
+        res.status(400).send({success: false, message: 'ID is required in the request body.'});
+    }
+    Movie.findByIdAndUpdate(id, function(err, movie)
     {
         if (err)
         {
             res.send(err);
+        }
+        else if (!movie)
+        {
+            res.status(404).send({success: false, message: 'Movie not found.'})
         }
         else
         {
