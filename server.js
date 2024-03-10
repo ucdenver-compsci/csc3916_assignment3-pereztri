@@ -163,7 +163,7 @@ router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
     {
         res.status(400).send({success: false, message: 'ID is required in the request body.'});
     }
-    Movie.findByIdAndRemove(id, function(err)
+    Movie.findByIdAndRemove(id, function(err, movie)
     {
         if (err)
         {
