@@ -20,7 +20,7 @@ mongoose.set('useCreateIndex', true);
 //     password: { type: String, required: true, select: false }
 // });
 
-//User Collection Schema (this is provided to you in the scaffolding project):
+//User Collection Schema to store user information (this is provided to you in the scaffolding project):
 const UserSchema = new mongoose.Schema({
     name: String,
     username: { type: String, unique: true },

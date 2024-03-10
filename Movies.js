@@ -9,8 +9,7 @@ mongoose.connect(process.env.DB);
 // });
 
 
-
-//Movie Collection Schema:
+//Movie Collection Schema to store movie information:
 const MovieSchema = new mongoose.Schema({
     title: { type: String, required: true, index: true },
     releaseDate: Date,
@@ -27,6 +26,5 @@ const MovieSchema = new mongoose.Schema({
   });
 
 
-
-// return the model
+  // return the model
 module.exports = mongoose.model('Movie', MovieSchema);

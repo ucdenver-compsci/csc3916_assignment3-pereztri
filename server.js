@@ -53,7 +53,7 @@ router.post('/signup', function(req, res) {
         user.save(function(err){
             if (err) {
                 if (err.code == 11000)
-                    return res.json({ success: false, message: 'A user with that username already exists.'});
+                    return res.json({ success: false, message: 'Error: A user with that username already exists.'});
                 else
                     return res.json(err);
             }
@@ -86,14 +86,12 @@ router.post('/signin', function (req, res) {
     })
 });
 
-
-
-
+//POST route
 router.post('/movies', authJwtController.isAuthenticated, function(req, res)
 {
-    if (!req.body.title || !req.body.actors || req.body.actors.length === 0)
+    if (!req.body.title || !req.body.releaseDate || !req.body.genre || !req.body.actors || req.body.actors.length === 0)
     {
-        res.status(400).send({success: false, message: 'The movie does not contain the required infromation. It is missing a title, release date, genre, or actors.' });
+        res.status(400).send({success: false, message: 'Error: The movie does not contain the required information. It is missing a title, release date, genre, actors, or character name.'});
     } 
     else 
     {
@@ -106,13 +104,13 @@ router.post('/movies', authJwtController.isAuthenticated, function(req, res)
             }
             else
             {
-                res.json({success: true, message: 'Movie created!' });
+                res.json({success: true, message: 'The movie was successfully saved.'});
             }
         });
     }
 });
 
-
+//GET route
 router.get('/movies', authJwtController.isAuthenticated, function(req, res)
 {
     Movie.find({}, function(err, movies)
@@ -128,16 +126,42 @@ router.get('/movies', authJwtController.isAuthenticated, function(req, res)
     });
 });
 
+//PUT route using the ID
+// router.put('/movies', authJwtController.isAuthenticated, function(req, res)
+// {
+//     const { id, ...updateData} = req.body; 
 
+//     if (!id) 
+//     {
+//         res.status(400).send({success: false, message: 'ID is required in the request body.'});
+//     }
+//     Movie.findByIdAndUpdate(id, updateData, {new: true}, function(err, movie)
+//     {
+//         if (err)
+//         {
+//             res.send(err);
+//         }
+//         else if (!movie)
+//         {
+//             res.status(404).send({success: false, message: 'Movie not found.'});
+//         }
+//         else
+//         {
+//             res.json({success: true, message: 'Movie updated! Here is the update:', movie});
+//         }
+//     });
+// });
+
+//PUT route using the Title
 router.put('/movies', authJwtController.isAuthenticated, function(req, res)
 {
-    const { id, ...updateData} = req.body; 
+    const {title, ...updateData} = req.body; 
 
-    if (!id) 
+    if (!title) 
     {
-        res.status(400).send({success: false, message: 'ID is required in the request body.'});
+        res.status(400).send({success: false, message: 'The title is required to complete the request.'});
     }
-    Movie.findByIdAndUpdate(id, updateData, {new: true}, function(err, movie)
+    Movie.findOneAndUpdate({title: title}, updateData, {new: true}, function(err, movie)
     {
         if (err)
         {
@@ -145,25 +169,51 @@ router.put('/movies', authJwtController.isAuthenticated, function(req, res)
         }
         else if (!movie)
         {
-            res.status(404).send({success: false, message: 'Movie not found.'});
+            res.status(404).send({success: false, message: 'The movie record was not found.'});
         }
         else
         {
-            res.json({success: true, message: 'Movie updated! Here is the update:', movie});
+            res.json({success: true, message: 'The movie was successfully updated.', movie});
         }
     });
 });
 
+//DELETE route using the ID
+// router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
+// {
+//     const {id} = req.body; 
 
+//     if (!id) 
+//     {
+//         res.status(400).send({success: false, message: 'ID is required in the request body.'});
+//     }
+//     Movie.findByIdAndRemove(id, function(err, movie)
+//     {
+//         if (err)
+//         {
+//             res.send(err);
+//         }
+//         else if (!movie)
+//         {
+//             res.status(404).send({success: false, message: 'Movie not found.'})
+//         }
+//         else
+//         {
+//             res.json({success: true, message: 'Movie deleted!'});
+//         }
+//     });
+// });
+
+//DELETE route using the Title
 router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
 {
-    const {id} = req.body; 
+    const {title} = req.body; 
 
-    if (!id) 
+    if (!title) 
     {
-        res.status(400).send({success: false, message: 'ID is required in the request body.'});
+        res.status(400).send({success: false, message: 'The title is required to complete the request.'});
     }
-    Movie.findByIdAndRemove(id, function(err, movie)
+    Movie.findOneAndDelete({title: title}, function(err, movie)
     {
         if (err)
         {
@@ -171,25 +221,16 @@ router.delete('/movies', authJwtController.isAuthenticated, function(req, res)
         }
         else if (!movie)
         {
-            res.status(404).send({success: false, message: 'Movie not found.'})
+            res.status(404).send({success: false, message: 'The movie record was not found.'})
         }
         else
         {
-            res.json({success: true, message: 'Movie deleted!'});
+            res.json({success: true, message: 'The movie was successfully deleted.'});
         }
     });
 });
-
-
-
-
-
-
-
 
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
-
-
